@@ -5,11 +5,13 @@ namespace App\Entity;
 use App\Repository\UtilisateurRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -37,9 +39,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private array $role = [];
-
-    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    private ?\DateTimeImmutable $dateInscription = null;
 
     public function getId(): ?int
     {
@@ -137,18 +136,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRole(array $role): static
     {
         $this->role = $role;
-
-        return $this;
-    }
-
-    public function getDateInscription(): ?\DateTimeImmutable
-    {
-        return $this->dateInscription;
-    }
-
-    public function setDateInscription(\DateTimeImmutable $dateInscription): static
-    {
-        $this->dateInscription = $dateInscription;
 
         return $this;
     }

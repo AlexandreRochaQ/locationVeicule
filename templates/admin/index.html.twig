@@ -2,19 +2,14 @@
 
 {% block title %}Hello AdminController!{% endblock %}
 
+{% extends 'base.html.twig' %}
+
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/Users/dre/Documents/GitHub/projet_locationVeicule/locationVeicule/src/Controller/AdminController.php</code></li>
-        <li>Your template at <code>/Users/dre/Documents/GitHub/projet_locationVeicule/locationVeicule/templates/admin/index.html.twig</code></li>
-    </ul>
-</div>
+<h1>Tableau de bord Admin</h1>
+<h2>Utilisateurs</h2>
+<ul>
+    {% for utilisateur in utilisateurs %}
+        <li>{{ utilisateur.nom }} ({{ utilisateur.email }})</li>
+    {% endfor %}
+</ul>
 {% endblock %}
