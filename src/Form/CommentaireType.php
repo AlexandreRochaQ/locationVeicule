@@ -17,14 +17,14 @@ class CommentaireType extends AbstractType
         $builder
             ->add('note')
             ->add('message')
-            ->add('utilisateur', EntityType::class, [
-                'class' => Utilisateur::class,
-                'choice_label' => 'id',
-            ])
-            ->add('vehicule', EntityType::class, [
-                'class' => Vehicule::class,
-                'choice_label' => 'id',
-            ])
+            // ->add('utilisateur', EntityType::class, [
+            //     'class' => Utilisateur::class,
+            //     'choice_label' => 'id',
+            // ])
+            // ->add('vehicule', EntityType::class, [
+            //     'class' => Vehicule::class,
+            //     'choice_label' => 'id',
+            // ])
         ;
     }
 

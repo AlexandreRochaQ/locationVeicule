@@ -8,8 +8,6 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Note</th>
                 <th>Message</th>
                 <th>actions</th>
             </tr>
@@ -17,8 +15,6 @@
         <tbody>
         {% for commentaire in commentaires %}
             <tr>
-                <td>{{ commentaire.id }}</td>
-                <td>{{ commentaire.note }}</td>
                 <td>{{ commentaire.message }}</td>
                 <td>
                     <a href="{{ path('app_commentaire_show', {'id': commentaire.id}) }}">show</a>
