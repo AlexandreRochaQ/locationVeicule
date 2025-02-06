@@ -13,9 +13,11 @@ use Symfony\Component\Routing\Attribute\Route;
 final class MainController extends AbstractController
 {   
     #[Route('/', name: 'home')]
-    public function index(): Response
+    public function index(VehiculeRepository $vehiculeRepository): Response
     {
-        return $this->render('main/index.html.twig');
+        return $this->render('main/index.html.twig', [
+            'vehicules' => $vehiculeRepository->findBy(['statut' => 'disponible']),
+        ]);
     }
     #[Route('/vehicules', name: 'vehicules')]
     public function indexvehicule(VehiculeRepository $vehiculeRepository): Response
@@ -24,20 +26,10 @@ final class MainController extends AbstractController
             'vehicules' => $vehiculeRepository->findBy(['statut' => 'disponible']),
         ]);
     }
-    #[Route('/vehicule/{id}/reserver', name: 'reservation')]
-    public function reserver(Vehicule $vehicule, EntityManagerInterface $entityManager): Response
-    {
-        $reservation = new Reservation();
-        $reservation->setUtilisateur($this->getUser());
-        $reservation->setVehicule($vehicule);
-        $reservation->setDateDebut(new \DateTimeImmutable());
-        $reservation->setDateFin((new \DateTimeImmutable())->modify('+3 days'));
-        $reservation->setPrixTotal($vehicule->getPrixJournalier() * 3);
-        $reservation->setStatut('confirmée');
-
-        $entityManager->persist($reservation);
-        $entityManager->flush();
-
-        return $this->redirectToRoute('reservations');
-    }
+    // #[Route('/reservations', name: 'reservations')]
+    // public function indexreservations(VehiculeRepository $vehiculeRepository): Response
+    // {
+    //     return $this->render('vehicule/index.html.twig', [
+    //     ]);
+    // }
 }

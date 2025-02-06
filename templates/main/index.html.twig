@@ -1,6 +1,44 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<h1>Mes Réservations</h1>
+<h1>Vehicules de location</h1>
+
+<table class="table">
+        <thead>
+            <tr>
+                <th>Marque</th>
+                <th>Modele</th>
+                <th>Immatriculation</th>
+                <th>PrixJournalier</th>
+                <th>Statut</th>
+                <th>Description</th>
+                <th>NoteMoyenne</th>
+                <th>DateAjout</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for vehicule in vehicules %}
+            <tr>
+                <td>{{ vehicule.marque }}</td>
+                <td>{{ vehicule.modele }}</td>
+                <td>{{ vehicule.immatriculation }}</td>
+                <td>{{ vehicule.prixJournalier }}</td>
+                <td>{{ vehicule.statut }}</td>
+                <td>{{ vehicule.description }}</td>
+                <td>{{ vehicule.noteMoyenne }}</td>
+                <td>{{ vehicule.dateAjout ? vehicule.dateAjout|date('Y-m-d') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_reservation_new', {'id': vehicule.id}) }}">réserver</a>
+                    <a href="{{ path('app_commentaire_index', {'id': vehicule.id}) }}">commentaires</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
 {% endblock %}

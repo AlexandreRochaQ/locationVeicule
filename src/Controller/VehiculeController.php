@@ -2,11 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\Commentaire;
 use App\Entity\Vehicule;
 use App\Form\VehiculeType;
 use App\Repository\VehiculeRepository;
+use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -78,4 +82,28 @@ final class VehiculeController extends AbstractController
 
         return $this->redirectToRoute('app_vehicule_index', [], Response::HTTP_SEE_OTHER);
     }
+    #[Route('/vehicule/{id}/commentaire', name: 'ajouter_commentaire')]
+public function ajouterCommentaire(Request $request, Vehicule $vehicule, EntityManagerInterface $entityManager): Response
+{
+    $commentaire = new Commentaire();
+    $commentaire->setUtilisateur($this->getUser());
+    $commentaire->setVehicule($vehicule);
+
+    $form = $this->createFormBuilder($commentaire)
+        ->add('note', IntegerType::class)
+        ->add('message', TextareaType::class)
+        ->add('submit', SubmitType::class, ['label' => 'Laisser un commentaire'])
+        ->getForm();
+
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $entityManager->persist($commentaire);
+        $entityManager->flush();
+        return $this->redirectToRoute('vehicules');
+    }
+
+    return $this->render('commentaire/ajouter.html.twig', ['form' => $form->createView()]);
+}
+
 }
