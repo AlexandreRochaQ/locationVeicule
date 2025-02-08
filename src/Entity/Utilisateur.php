@@ -40,6 +40,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $role = [];
 
+
     public function getId(): ?int
     {
         return $this->id;

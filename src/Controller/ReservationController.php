@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/reservation')]
 final class ReservationController extends AbstractController
@@ -23,24 +24,31 @@ final class ReservationController extends AbstractController
     }
 
     #[Route('/new', name: 'app_reservation_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $reservation = new Reservation();
-        $form = $this->createForm(ReservationType::class, $reservation);
-        $form->handleRequest($request);
+public function new(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
+{
+    $reservation = new Reservation();
+    $form = $this->createForm(ReservationType::class, $reservation);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($reservation);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
+    if ($form->isSubmitted() && $form->isValid()) {
+        $errors = $validator->validate($reservation);
+        if (count($errors) > 0) {
+            return $this->render('reservation/new.html.twig', [
+                'form' => $form,
+                'errors' => $errors,
+            ]);
         }
 
-        return $this->render('reservation/new.html.twig', [
-            'reservation' => $reservation,
-            'form' => $form,
-        ]);
+        $entityManager->persist($reservation);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_reservation_index');
     }
+
+    return $this->render('reservation/new.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
 
     #[Route('/{id}', name: 'app_reservation_show', methods: ['GET'])]
     public function show(Reservation $reservation): Response
@@ -78,5 +86,4 @@ final class ReservationController extends AbstractController
 
         return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
     }
-    
 }

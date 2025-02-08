@@ -21,8 +21,8 @@ class ReservationType extends AbstractType
             ->add('dateFin', null, [
                 'widget' => 'single_text',
             ])
-            // ->add('prixTotal')
-            // ->add('statut')
+            ->add('prixTotal')
+            ->add('statut')
             // ->add('utilisateur', EntityType::class, [
             //     'class' => Utilisateur::class,
             //     'choice_label' => 'id',

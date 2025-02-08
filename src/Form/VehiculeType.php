@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Vehicule;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -22,6 +23,14 @@ class VehiculeType extends AbstractType
             ->add('dateAjout', null, [
                 'widget' => 'single_text',
             ])
+            ->add('photo', FileType::class, [
+                'label' => 'Photo du véhicule (JPG, PNG)',
+                'mapped' => false,
+                'required' => false,
+                'attr' => [
+                    'accept' => 'image/*'
+                ],
+            ])    
         ;
     }
 

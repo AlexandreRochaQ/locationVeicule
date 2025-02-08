@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Commentaire;
+use App\Entity\Reservation;
 use App\Entity\Vehicule;
+use App\Form\CommentaireType;
 use App\Form\VehiculeType;
 use App\Repository\VehiculeRepository;
 use Doctrine\DBAL\Types\IntegerType;
@@ -14,6 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/vehicule')]
 final class VehiculeController extends AbstractController
@@ -27,30 +30,72 @@ final class VehiculeController extends AbstractController
     }
 
     #[Route('/new', name: 'app_vehicule_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $vehicule = new Vehicule();
         $form = $this->createForm(VehiculeType::class, $vehicule);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
+            $photo = $form->get('photo')->getData();
+    
+            if ($photo) {
+                $newFilename = $slugger->slug($vehicule->getMarque()) . '-' . uniqid() . '.' . $photo->guessExtension();
+    
+                $photo->move(
+                    $this->getParameter('photos_directory'),
+                    $newFilename
+                );
+    
+                $vehicule->setPhoto($newFilename);
+            }
+    
             $entityManager->persist($vehicule);
             $entityManager->flush();
-
+    
             return $this->redirectToRoute('app_vehicule_index', [], Response::HTTP_SEE_OTHER);
         }
-
+    
         return $this->render('vehicule/new.html.twig', [
             'vehicule' => $vehicule,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
+    
 
-    #[Route('/{id}', name: 'app_vehicule_show', methods: ['GET'])]
-    public function show(Vehicule $vehicule): Response
+    #[Route('/{id}', name: 'app_vehicule_show', methods: ['GET', 'POST'])]
+    public function show(Vehicule $vehicule, Request $request, EntityManagerInterface $entityManager): Response
     {
+        $user = $this->getUser();
+        $commentaires = $vehicule->getCommentaires();
+        $peutCommenter = false;
+
+        if ($user) {
+            $peutCommenter = $entityManager->getRepository(Reservation::class)->findOneBy([
+                'utilisateur' => $user,
+                'vehicule' => $vehicule
+            ]) !== null;
+        }
+
+        $commentaire = new Commentaire();
+        $form = $this->createForm(CommentaireType::class, $commentaire);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $commentaire->setVehicule($vehicule);
+            $commentaire->setUtilisateur($user);
+            $entityManager->persist($commentaire);
+            $entityManager->flush();
+
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_vehicule_show', ['id' => $vehicule->getId()]);
+        }
+
         return $this->render('vehicule/show.html.twig', [
             'vehicule' => $vehicule,
+            'commentaires' => $commentaires,
+            'form' => $peutCommenter ? $form->createView() : null
         ]);
     }
 
@@ -105,5 +150,36 @@ public function ajouterCommentaire(Request $request, Vehicule $vehicule, EntityM
 
     return $this->render('commentaire/ajouter.html.twig', ['form' => $form->createView()]);
 }
+    #[Route('/{id}', name: 'app_vehicule_show', methods: ['GET'])]
+    public function showcomments(Vehicule $vehicule): Response
+    {
+        return $this->render('vehicule/show.html.twig', [
+            'vehicule' => $vehicule,
+            'commentaires' => $vehicule->getCommentaires(),
+        ]);
+    }
 
+    #[Route('/vehicule/{id}/add-favori', name: 'app_vehicule_add_favori', methods: ['GET'])]
+    public function addFavori(Vehicule $vehicule, EntityManagerInterface $entityManager): Response
+    {
+        $utilisateur = $this->getUser();
+        if ($utilisateur && !$vehicule->getFavoris()->contains($utilisateur)) {
+            $vehicule->addFavori($utilisateur);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_vehicule_index');
+    }
+
+    #[Route('/vehicule/{id}/remove-favori', name: 'app_vehicule_remove_favori', methods: ['GET'])]
+    public function removeFavori(Vehicule $vehicule, EntityManagerInterface $entityManager): Response
+    {
+        $utilisateur = $this->getUser();
+        if ($utilisateur && $vehicule->getFavoris()->contains($utilisateur)) {
+            $vehicule->removeFavori($utilisateur);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_vehicule_index');
+    }
 }

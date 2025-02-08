@@ -6,6 +6,7 @@
 <table class="table">
         <thead>
             <tr>
+                <th>Info</th>
                 <th>Marque</th>
                 <th>Modele</th>
                 <th>Immatriculation</th>
@@ -20,6 +21,7 @@
         <tbody>
         {% for vehicule in vehicules %}
             <tr>
+                <td><a href="{{ path('app_vehicule_show', {'id': vehicule.id}) }}">{{vehicule.id}}</td>
                 <td>{{ vehicule.marque }}</td>
                 <td>{{ vehicule.modele }}</td>
                 <td>{{ vehicule.immatriculation }}</td>
@@ -29,8 +31,12 @@
                 <td>{{ vehicule.noteMoyenne }}</td>
                 <td>{{ vehicule.dateAjout ? vehicule.dateAjout|date('Y-m-d') : '' }}</td>
                 <td>
+                <img src="{{ asset('uploads/vehicules/' ~ vehicule.photo) }}" style="max-width: 150px; max-height: 150px;" />
+                </td>
+
+                <td>
                     <a href="{{ path('app_reservation_new', {'id': vehicule.id}) }}">réserver</a>
-                    <a href="{{ path('app_commentaire_index', {'id': vehicule.id}) }}">commentaires</a>
+                    <a href="{{ path('app_commentaire_show', {'id': vehicule.id}) }}">commentaires</a>
                 </td>
             </tr>
         {% else %}

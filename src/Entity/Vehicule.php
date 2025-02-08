@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: VehiculeRepository::class)]
 class Vehicule
@@ -26,9 +27,13 @@ class Vehicule
     private ?string $immatriculation = null;
 
     #[ORM\Column]
+    #[Assert\NotNull]
+    #[Assert\Range(min: 100, max: 500, notInRangeMessage: 'Le prix journalier doit être entre {{ min }} et {{ max }} €.')]
     private ?float $prixJournalier = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotNull]
+    #[Assert\Choice(choices: ['disponible', 'indisponible'], message: 'Le statut doit être soit "disponible" soit "indisponible".')]
     private ?string $statut = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -39,6 +44,12 @@ class Vehicule
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private ?\DateTimeImmutable $dateAjout = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $photo = null;
+
+    #[ORM\ManyToMany(targetEntity: Utilisateur::class, inversedBy: 'favoris')]
+    private Collection $favoris;
 
     /**
      * @var Collection<int, Reservation>
@@ -56,6 +67,7 @@ class Vehicule
     {
         $this->reservations = new ArrayCollection();
         $this->commentaires = new ArrayCollection();
+        $this->favoris = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -218,4 +230,36 @@ class Vehicule
 
         return $this;
     }
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto(?string $photo): self
+    {
+        $this->photo = $photo;
+        return $this;
+    }
+
+    public function getFavoris(): Collection
+    {
+        return $this->favoris;
+    }
+
+    public function addFavori(Utilisateur $utilisateur): self
+    {
+        if (!$this->favoris->contains($utilisateur)) {
+            $this->favoris[] = $utilisateur;
+        }
+
+        return $this;
+    }
+
+    public function removeFavori(Utilisateur $utilisateur): self
+    {
+        $this->favoris->removeElement($utilisateur);
+
+        return $this;
+    }
+    
 }

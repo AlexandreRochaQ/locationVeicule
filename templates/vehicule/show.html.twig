@@ -4,7 +4,9 @@
 
 {% block body %}
     <h1>Vehicule</h1>
-
+    <div>
+        <img src="{{ asset('uploads/vehicules/' ~ vehicule.photo) }}" alt="Photo du véhicule" />    
+    </div>
     <table class="table">
         <tbody>
             <tr>
@@ -43,7 +45,21 @@
                 <th>DateAjout</th>
                 <td>{{ vehicule.dateAjout ? vehicule.dateAjout|date('Y-m-d') : '' }}</td>
             </tr>
+            <th>Commentaires</th>
+            {% for commentaire in commentaires %}
+                <td>{{ commentaire.message }}</td>
+                <hr>
+            {% else %}
+                <td>Aucun commentaire pour ce véhicule.</td >
+            {% endfor %}
         </tbody>
+        <td>
+        {% if app.user and vehicule.favoris.contains(app.user) %}
+            <a href="{{ path('app_vehicule_remove_favori', {'id': vehicule.id}) }}" class="btn btn-danger">Retirer des favoris</a>
+        {% else %}
+            <a href="{{ path('app_vehicule_add_favori', {'id': vehicule.id}) }}" class="btn btn-success">Ajouter aux favoris</a>
+        {% endif %}
+        </td>
     </table>
 
     <a href="{{ path('app_vehicule_index') }}">back to list</a>

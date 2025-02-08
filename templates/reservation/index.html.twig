@@ -25,8 +25,8 @@
                 <td>{{ reservation.prixTotal }}</td>
                 <td>{{ reservation.statut }}</td>
                 <td>
-                    <a href="{{ path('app_reservation_show', {'id': reservation.id}) }}">show</a>
-                    <a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">edit</a>
+                    <a href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
+                    <a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Editer</a>
                 </td>
             </tr>
         {% else %}
@@ -37,5 +37,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_reservation_new') }}">Create new</a>
+    <a href="{{ path('app_reservation_new') }}">Créer nouveau</a>
 {% endblock %}
