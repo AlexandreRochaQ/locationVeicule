@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Favoris{% endblock %}
+
+{% block body %}
+    <h1>Mes Véhicules Favoris</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Marque</th>
+                <th>Modèle</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vehicule in vehicules %}
+                <tr>
+                    <td>{{ vehicule.marque }}</td>
+                    <td>{{ vehicule.modele }}</td>
+                    <td>
+                        <a href="{{ path('app_vehicule_show', {'id': vehicule.id}) }}">Voir</a>
+                        <a href="{{ path('app_vehicule_remove_favori', {'id': vehicule.id}) }}">Retirer des favoris</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">Aucun véhicule en favori.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -181,5 +181,26 @@ public function ajouterCommentaire(Request $request, Vehicule $vehicule, EntityM
         }
 
         return $this->redirectToRoute('app_vehicule_index');
+    }   
+    #[Route('/vehicule/favoris', name: 'app_vehicule_favoris', methods: ['GET'])]
+    public function favoris(EntityManagerInterface $entityManager): Response
+    {
+        $utilisateur = $this->getUser();
+        
+        if (!$utilisateur) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $favoris = $entityManager->getRepository(Vehicule::class)
+            ->createQueryBuilder('v')
+            ->leftJoin('v.favoris', 'u')
+            ->where('u.id = :userId')
+            ->setParameter('userId', $utilisateur)
+            ->getQuery()
+            ->getResult();
+
+        return $this->render('vehicule/favoris.html.twig', [
+            'vehicules' => $favoris,
+        ]);
     }
 }

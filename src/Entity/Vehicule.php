@@ -49,13 +49,12 @@ class Vehicule
     private ?string $photo = null;
 
     #[ORM\ManyToMany(targetEntity: Utilisateur::class, inversedBy: 'favoris')]
+    #[ORM\JoinTable(name: "favoris")]
     private Collection $favoris;  
      
     #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'vehicule', cascade: ['remove'])]
     private Collection $commentaires;
-
-
-
+    
     /**
      * @var Collection<int, Reservation>
      */
@@ -265,4 +264,10 @@ class Vehicule
 
         return $this;
     }
+
+    public function getNombreReservations(): int
+    {
+        return count($this->reservations);
+    }
+
 }
