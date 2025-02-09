@@ -49,7 +49,12 @@ class Vehicule
     private ?string $photo = null;
 
     #[ORM\ManyToMany(targetEntity: Utilisateur::class, inversedBy: 'favoris')]
-    private Collection $favoris;
+    private Collection $favoris;  
+     
+    #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'vehicule', cascade: ['remove'])]
+    private Collection $commentaires;
+
+
 
     /**
      * @var Collection<int, Reservation>
@@ -60,8 +65,7 @@ class Vehicule
     /**
      * @var Collection<int, Commentaire>
      */
-    #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'vehicule')]
-    private Collection $commentaires;
+    
 
     public function __construct()
     {
