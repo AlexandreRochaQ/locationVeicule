@@ -153,9 +153,12 @@ public function ajouterCommentaire(Request $request, Vehicule $vehicule, EntityM
     #[Route('/{id}', name: 'app_vehicule_show', methods: ['GET'])]
     public function showcomments(Vehicule $vehicule): Response
     {
+        $commentaires = $vehicule->getCommentaires();
+        
         return $this->render('vehicule/show.html.twig', [
             'vehicule' => $vehicule,
             'commentaires' => $vehicule->getCommentaires(),
+            'nombreReservations' => $vehicule->getNombreReservations(),
         ]);
     }
 

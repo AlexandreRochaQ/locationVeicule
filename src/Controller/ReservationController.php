@@ -32,6 +32,8 @@ public function new(Request $request, EntityManagerInterface $entityManager, Val
 
     if ($form->isSubmitted() && $form->isValid()) {
         $errors = $validator->validate($reservation);
+        $reservation->applyDiscount();
+        
         if (count($errors) > 0) {
             return $this->render('reservation/new.html.twig', [
                 'form' => $form,

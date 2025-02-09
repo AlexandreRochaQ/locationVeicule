@@ -1,0 +1,13 @@
+<h1>Mes Favoris</h1>
+
+<ul>
+    {% for vehicule in favoris %}
+        <li>
+            <a href="{{ path('app_vehicule_show', {'id': vehicule.id}) }}">
+                {{ vehicule.marque }} - {{ vehicule.modele }}
+            </a>
+        </li>
+    {% else %}
+        <li>Aucun véhicule en favori</li>
+    {% endfor %}
+</ul>

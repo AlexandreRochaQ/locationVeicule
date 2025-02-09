@@ -268,6 +268,6 @@ class Vehicule
     public function getNombreReservations(): int
     {
         return count($this->reservations);
-    }
+    }   
 
 }

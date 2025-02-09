@@ -52,6 +52,10 @@
             {% else %}
                 <td>Aucun commentaire pour ce véhicule.</td >
             {% endfor %}
+            <tr>
+            <th>Nombre de réservations</th>
+                <td>{{ vehicule.nombreReservations() }}</td>
+            </tr>
         </tbody>
         <td>
         {% if app.user and vehicule.favoris.contains(app.user) %}
