@@ -7,6 +7,7 @@ use App\Entity\Utilisateur;
 use App\Entity\Vehicule;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -21,7 +22,12 @@ class ReservationType extends AbstractType
             ->add('dateFin', null, [
                 'widget' => 'single_text',
             ])
-            ->add('prixTotal')
+            ->add('prixTotal', NumberType::class, [
+                'required' => true,
+                'scale' => 2,
+                'html5' => true,
+            ])
+            
             ->add('statut')
             // ->add('utilisateur', EntityType::class, [
             //     'class' => Utilisateur::class,

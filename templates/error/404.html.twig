@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="error-container">
+        <h1>Oops!</h1>
+        <p>{{ message }}</p>
+        <a href="{{ path('app_commentaire_new') }}">Create new</a>
+        <a href="{{ path('home') }}" class="btn btn-primary">Retour à l'accueil</a>
+    </div>
+{% endblock %}

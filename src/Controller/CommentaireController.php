@@ -42,13 +42,26 @@ final class CommentaireController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_commentaire_show', methods: ['GET'])]
-    public function show(Commentaire $commentaire): Response
+    #[Route('/commentaire/{id}', name: 'app_commentaire_show', methods: ['GET'])]
+    public function show(int $id, EntityManagerInterface $entityManager): Response
     {
-        return $this->render('commentaire/show.html.twig', [
-            'commentaire' => $commentaire,
-        ]);
+        try {
+            $commentaire = $entityManager->getRepository(Commentaire::class)->find($id);
+
+            if (!$commentaire) {
+                throw new \Exception('Ce commentaire n\'existe pas.');
+            }
+
+            return $this->render('commentaire/show.html.twig', [
+                'commentaire' => $commentaire,
+            ]);
+        } catch (\Exception $e) {
+            return $this->render('error/404.html.twig', [
+                'message' => $e->getMessage()
+            ]);
+        }
     }
+
 
     #[Route('/{id}/edit', name: 'app_commentaire_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Commentaire $commentaire, EntityManagerInterface $entityManager): Response

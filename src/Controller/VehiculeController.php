@@ -104,7 +104,7 @@ final class VehiculeController extends AbstractController
     {
         $form = $this->createForm(VehiculeType::class, $vehicule);
         $form->handleRequest($request);
-
+        
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 

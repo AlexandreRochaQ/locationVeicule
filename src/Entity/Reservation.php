@@ -31,7 +31,7 @@ class Reservation
     private ?\DateTimeImmutable $dateFin = null;
 
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2, nullable: true)]
-    private ?float $prixTotal = null;
+    private ?string $prixTotal = null;
     
     #[ORM\Column(length: 50)]
 
